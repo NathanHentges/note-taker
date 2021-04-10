@@ -43,9 +43,9 @@ app.post("/api/notes", (req, res) => {
     } else {
       const notes = JSON.parse(data);
       notes.push(newNote);
-      fs.writeFile(path.join(__dirname, "../db/db.json"), JSON.stringify(notes), (err, data) => {
+      fs.writeFile(path.join(__dirname, "../db/db.json"), JSON.stringify(notes), (error, data2) => {
         if (err) {
-          console.log(err);
+          console.log(error);
         } else {
           res.json(notes);
         }
@@ -75,7 +75,6 @@ app.delete("/api/notes/:id", (req, res) => {
       });
     }
   });
-
 });
 
 // Default route
