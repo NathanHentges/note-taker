@@ -2,6 +2,7 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const nanoid = require("nanoid");
 
 
 const app = express();
@@ -10,7 +11,6 @@ const PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../public")));
-
 
 // Routes ---------
 app.get("/", (req, res) => {
@@ -24,7 +24,6 @@ app.get("/notes", (req, res) => {
 
 // API Routes ---------
 app.get("/api/notes", (req, res) => {
-  // eslint-disable-next-line arrow-body-style
   fs.readFile(path.join(__dirname, "../db/db.json"), (err, data) => {
     if (err) {
       console.log(err);
@@ -35,7 +34,24 @@ app.get("/api/notes", (req, res) => {
 });
 
 app.post("/api/notes", (req, res) => {
-
+  const newNote = req.body;
+  newNote.id = nanoid.nanoid();
+  console.log(newNote);
+  fs.readFile(path.join(__dirname, "../db/db.json"), (err, data) => {
+    if (err) {
+      console.log(err);
+    } else {
+      const notes = JSON.parse(data);
+      notes.push(newNote);
+      fs.writeFile(path.join(__dirname, "../db/db.json"), JSON.stringify(notes), (err, data) => {
+        if (err) {
+          console.log(err);
+        } else {
+          res.json(notes);
+        }
+      });
+    }
+  });
 });
 
 // Default route
